@@ -156,6 +156,55 @@
             background: #0070ba; color: #fff; text-decoration: none;
             font-family: 'Syncopate', sans-serif; font-size: 12px;
         }
+        
+        /* === ACCORDION STYLES === */
+        .product-accordion {
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .product-accordion details {
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .product-accordion summary {
+            list-style: none; /* Entfernt Standard-Pfeil */
+            padding: 20px 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Custom Pfeil rechts */
+        .product-accordion summary::after {
+            content: '↓'; /* Oder ein SVG Icon */
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-accordion details[open] summary::after {
+            transform: rotate(180deg);
+        }
+        
+        /* Chrome/Safari Pfeil verstecken */
+        .product-accordion summary::-webkit-details-marker {
+            display: none;
+        }
+        
+        .accordion-content {
+            padding: 0 0 20px 0;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        
     </style>
 </head>
 <body>
@@ -248,7 +297,6 @@
                 <p style="font-size:11px; color:#666;">Bezahle den Betrag via PayPal (ID im Betreff angeben):</p>
                 <a id="paypalLink" href="#" target="_blank" class="paypal-button">PER PAYPAL ZAHLEN</a>
             </div>
-        </section>
         <div class="product-accordion">
     <details>
         <summary>DETAILS</summary>
@@ -277,6 +325,7 @@
             <p>100% des Erlöses (nach Abzug der Produktionskosten) werden zu gleichen Teilen an <strong>Heyva Sor a Kurdistanê e.V.</strong> und den <strong>Palestine Children's Relief Fund (PCRF)</strong> gespendet.</p>
         </div>
     </details>
+        </section>
 </div>
     </main>
 
