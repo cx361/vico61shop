@@ -16,10 +16,12 @@
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            overflow-y: auto
+            overflow-y: auto; /* Wichtig für die Scrollbarkeit */
         }
 
-        @media (min-width: 851px) { body { height: 100vh; overflow: hidden; } }
+        @media (min-width: 851px) { 
+            body { overflow-y: auto; } 
+        }
 
         header {
             padding: 30px 60px;
@@ -34,14 +36,14 @@
             flex: 1;
             padding: 0 60px 40px 60px;
             gap: 40px;
-            align-items: center;
+            align-items: flex-start; /* Oben ausrichten */
             justify-content: center;
         }
 
         @media (max-width: 850px) {
             header { padding: 20px; font-size: 20px; }
-            main { flex-direction: column; padding: 0 20px 40px 20px; }
-            .gallery-section { height: 35vh !important; max-width: 100% !important; }
+            main { flex-direction: column; padding: 0 20px 40px 20px; align-items: stretch; }
+            .gallery-section { height: 35vh !important; max-width: 100% !important; position: relative !important; top: 0 !important; }
         }
 
         .gallery-section {
@@ -52,7 +54,8 @@
             flex-direction: column;
             justify-content: center;
             background: #f9f9f9;
-            position: relative;
+            position: sticky; /* Hält das Bild im Sichtfeld */
+            top: 20px;
         }
 
         #main-jersey-image { width: 100%; height: 100%; object-fit: contain; cursor: pointer; padding: 20px; }
@@ -65,14 +68,13 @@
         #nav-left { left: 10px; }
         #nav-right { right: 10px; }
 
-        .order-section { flex: 1; max-width: 420px; }
+        .order-section { flex: 1; max-width: 420px; padding-bottom: 50px; }
 
         .product-info h2 { font-family: 'Syncopate', sans-serif; font-size: 16px; margin-bottom: 8px; }
         .product-info p { font-size: 12px; color: #666; line-height: 1.4; margin-bottom: 15px; }
 
-        /* === SLIDER STYLES UPDATE === */
         .donation-box {
-            background: #1a1a1a; /* WEICHERES DUNKELGRAU STATT SCHWARZ */
+            background: #1a1a1a;
             color: #fff;
             padding: 20px;
             margin-bottom: 20px;
@@ -89,7 +91,7 @@
         .slider-container { 
             width: 100%; 
             padding: 10px 0; 
-            position: relative; /* Für die Markierung */
+            position: relative; 
         }
 
         input[type=range] {
@@ -100,7 +102,7 @@
             outline: none;
             margin: 15px 0;
             position: relative;
-            z-index: 2; /* Über der Markierung */
+            z-index: 2;
         }
 
         input[type=range]::-webkit-slider-thumb {
@@ -109,30 +111,28 @@
             height: 25px;
             background: #fff;
             cursor: pointer;
-            border: 2px solid #1a1a1a; /* Angepasst an den neuen Box-Hintergrund */
+            border: 2px solid #1a1a1a;
         }
 
-        /* === NEU: Die visuelle Markierung auf der Schiene für 30€ === */
         .mark-base {
             position: absolute;
-            top: 25px; /* Positioniere es direkt unter der Schiene */
-            left: calc( ( (30 - 23) / (50 - 23) ) * 100% ); /* Berechne die genaue Position für 30€ */
+            top: 25px;
+            left: calc( ( (30 - 23) / (61 - 23) ) * 100% );
             width: 2px;
-            height: 10px; /* Kleine Markierung */
+            height: 10px;
             background: #fff;
-            opacity: 0.5; /* Dezent */
-            z-index: 1; /* Unter dem Daumen */
+            opacity: 0.5;
+            z-index: 1;
         }
 
         .slider-labels {
             display: flex;
-            justify-content: space-between; /* Ränder fixiert */
+            justify-content: space-between;
             font-size: 10px;
             font-family: 'Syncopate', sans-serif;
             opacity: 0.7;
         }
 
-        /* Form Elements */
         input, select {
             width: 100%; padding: 12px; margin-bottom: 10px;
             border: 1px solid #000; font-family: 'Inter', sans-serif;
@@ -255,8 +255,8 @@
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwrg36-1bzzSIzTnI-9UyA3E9nWFrL3cwDcT7zNUnDvmiH4LOPcfEKJBFTUW_JIAOeL/exec';
-        const PAYPAL_EMAIL = "DEINEMAIL@GMAIL.COM"; 
-        const SECRET_CODE = "VON36BIS61WESH";
+        const PAYPAL_EMAIL = "carlojancke@GMAIL.COM"; 
+        const SECRET_CODE = "361";
 
         const images = {
             'hellblau': { front: 'jersey_baby_front.jpeg', back: 'jersey_baby_back.jpeg' },
@@ -285,9 +285,15 @@
             document.getElementById('pickup-field').classList.toggle('hidden', versandart.value !== 'pickup');
             document.getElementById('address-fields').classList.toggle('hidden', versandart.value !== 'versand');
             checkValidation();
+            
+            // Fokus-Fix: Zum Button scrollen, wenn Formular aufklappt
+            if(versandart.value !== "") {
+                setTimeout(() => {
+                    document.getElementById('submitBtn').scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 100);
+            }
         };
 
-        // Galerie Logik
         const img = document.getElementById('main-jersey-image');
         const ind = document.getElementById('view-indicator');
         function updateUI() {
@@ -299,35 +305,29 @@
         img.onclick = () => { currentSide = currentSide === 'front' ? 'back' : 'front'; updateUI(); };
         document.getElementById('farbeSelect').onchange = (e) => { currentColor = e.target.value; updateUI(); };
 
-        // Validierung
         function checkValidation() {
             const v = versandart.value;
             const name = document.getElementsByName('name')[0].value;
             const email = document.getElementsByName('email')[0].value;
             const fnf = document.getElementById('fnf_input').value;
             const btn = document.getElementById('submitBtn');
-            
             let ok = name.length > 2 && email.includes('@');
             if(v === 'pickup' && fnf !== SECRET_CODE) ok = false;
             if(v === 'versand' && document.getElementsByName('strasse')[0].value.length < 3) ok = false;
             if(!v) ok = false;
-            
             btn.disabled = !ok;
         }
         document.getElementById('orderForm').oninput = checkValidation;
 
-        // Submit
         document.getElementById('orderForm').onsubmit = (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
             btn.textContent = "SENDING...";
-
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
             const id = data.name.substring(0,2).toUpperCase() + "-" + Math.floor(1000 + Math.random()*9000);
             const finalVal = calculateTotal();
-
             const ppLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(PAYPAL_EMAIL)}&amount=${finalVal}&currency_code=EUR&item_name=VICO61%20Order%20${id}&no_shipping=1`;
 
             fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({...data, orderID: id, total: finalVal}) })
