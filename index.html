@@ -2,42 +2,116 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VICO Jersey Drop</title>
     <style>
-        body { font-family: sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; line-height: 1.6; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #000; color: #fff; border: none; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
-        #message { margin-top: 20px; font-weight: bold; text-align: center; }
+        body { font-family: sans-serif; max-width: 500px; margin: 20px auto; padding: 20px; line-height: 1.6; color: #333; }
+        h1 { text-align: center; margin-bottom: 10px; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; box-sizing: border-box; border-radius: 4px; font-size: 16px; }
+        textarea { resize: vertical; }
         
-        /* Container für die dynamischen Felder verstecken wir anfangs */
+        /* === Galerie Styles === */
+        #gallery-container {
+            width: 100%;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            /* Versteckt, bis eine Farbe gewählt wird */
+            display: none; 
+        }
+
+        #main-image-viewer {
+            width: 100%;
+            position: relative;
+            /* Verhindert Layout-Shift beim Laden */
+            aspect-ratio: 1 / 1; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #main-jersey-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Navigations-Overlays (Pfeile) */
+        .nav-overlay {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0);
+            color: #000;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+            opacity: 0.5;
+        }
+        .nav-overlay:hover {
+            background: rgba(255,255,255,0.3);
+            opacity: 1;
+        }
+        #nav-left { left: 0; }
+        #nav-right { right: 0; }
+
+        /* Ansichts-Indikator Text (z.B. "Vorderseite") */
+        #view-indicator {
+            text-align: center;
+            padding: 8px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* === Formular Styles === */
+        button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; cursor: pointer; font-weight: bold; font-size: 18px; margin-top: 15px; border-radius: 4px; transition: background 0.2s; }
+        button:hover { background: #333; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        
+        #message { margin-top: 20px; font-weight: bold; text-align: center; padding: 15px; border-radius: 4px; display: none;}
+        .success-msg { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block !important;}
+        .error-msg { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block !important;}
+        
         .hidden-fields { display: none; }
-        
-        /* Layout für PLZ und Ort nebeneinander */
         .flex-row { display: flex; gap: 10px; }
-        .flex-row > input:first-child { flex: 1; } /* PLZ schmaler */
-        .flex-row > input:last-child { flex: 2; }  /* Ort breiter */
+        .flex-row > input { flex: 1; }
     </style>
 </head>
 <body>
     <h1>VICO Jersey Pre-Order</h1>
-    <p>Wähle deine Details für das <361 Trikot.</p>
+    
+    <div id="gallery-container">
+        <div id="main-image-viewer">
+            <div class="nav-overlay" id="nav-left">&#10094;</div>
+            
+            <img id="main-jersey-image" src="" alt="Jersey Vorschau">
+            
+            <div class="nav-overlay" id="nav-right">&#10095;</div>
+        </div>
+        <div id="view-indicator">Vorderseite</div>
+    </div>
+
+    <p style="text-align: center;">Wähle deine Details für das <361 Trikot.</p>
 
     <form id="orderForm">
-        <input type="text" name="name" placeholder="Vollständiger Name" required>
-        <input type="email" name="email" placeholder="E-Mail Adresse" required>
         
-        <select name="farbe" required>
+        <select name="farbe" id="farbeSelect" required>
             <option value="">Farbe wählen</option>
             <option value="hellblau">Hellblau</option>
             <option value="dunkelblau">Dunkelblau</option>
-        </select>
-
-        <select name="groesse" required>
-            <option value="">Größe wählen</option>
-            <option value="S">S</option>
-            <option value="M">M</option>
-            <option value="L">L</option>
-            <option value="XL">XL</option>
         </select>
 
         <select name="nummer" required>
@@ -46,6 +120,18 @@
             <option value="61">61</option>
             <option value="ohne">ohne</option>
         </select>
+        
+        <select name="groesse" required>
+            <option value="">Größe wählen</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+        </select>
+
+        <input type="text" name="name" placeholder="Vollständiger Name" required>
+        <input type="email" name="email" placeholder="E-Mail Adresse" required>
+        
 
         <select name="versandart" id="versandart" required>
             <option value="">Lieferart wählen</option>
@@ -71,42 +157,98 @@
     <div id="message"></div>
 
     <script>
+        // === KONFIGURATION ===
+        // Dein Google Apps Script URL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwrg36-1bzzSIzTnI-9UyA3E9nWFrL3cwDcT7zNUnDvmiH4LOPcfEKJBFTUW_JIAOeL/exec';
-        const form = document.getElementById('orderForm');
         
-        // Logik für das Ein-/Ausblenden der Versand/Pickup-Felder
+        // Bild-Datenbank (Dateinamen müssen exakt mit GitHub übereinstimmen)
+        const jerseyImages = {
+            'hellblau': {
+                front: 'jersey_baby_front.jpeg',
+                back: 'jersey_baby_back.jpeg'
+            },
+            'dunkelblau': {
+                front: 'jersey_navy_front.jpeg',
+                back: 'jersey_navy_back.jpeg'
+            }
+        };
+
+        // === GALERIE LOGIK ===
+        let currentActiveColor = ''; // Hält die aktuell gewählte Farbe fest
+        let currentViewSide = 'front'; // Hält fest, ob Front oder Back gezeigt wird
+
+        const galleryContainer = document.getElementById('gallery-container');
+        const mainImage = document.getElementById('main-jersey-image');
+        const viewIndicator = document.getElementById('view-indicator');
+        const colorSelect = document.getElementById('farbeSelect');
+        const navLeft = document.getElementById('nav-left');
+        const navRight = document.getElementById('nav-right');
+
+        // Funktion zum Aktualisieren des Galerie-Inhalts
+        function updateGallery() {
+            if (!currentActiveColor || !jerseyImages[currentActiveColor]) {
+                galleryContainer.style.display = 'none'; // Verstecken, wenn keine gültige Farbe
+                return;
+            }
+
+            galleryContainer.style.display = 'block'; // Anzeigen
+            const imageUrl = jerseyImages[currentActiveColor][currentViewSide];
+            
+            // Bildquelle ändern
+            mainImage.src = imageUrl;
+            
+            // Textindikator ändern
+            viewIndicator.textContent = (currentViewSide === 'front') ? 'Vorderseite' : 'Rückseite';
+        }
+
+        // Funktion zum Umschalten der Ansicht (Front <-> Back)
+        function toggleView() {
+            currentViewSide = (currentViewSide === 'front') ? 'back' : 'front';
+            updateGallery();
+        }
+
+        // Event Listener für Farbwechsel im Dropdown
+        colorSelect.addEventListener('change', function() {
+            currentActiveColor = this.value;
+            currentViewSide = 'front'; // Immer zur Vorderseite zurückkehren bei Farbwechsel
+            updateGallery();
+        });
+
+        // Event Listener für Navigations-Pfeile
+        navLeft.addEventListener('click', toggleView);
+        navRight.addEventListener('click', toggleView);
+        // Klick aufs Bild schaltet auch um
+        mainImage.addEventListener('click', toggleView); 
+
+
+        // === FORMULAR & VERSAND LOGIK ===
+        const form = document.getElementById('orderForm');
         const versandSelect = document.getElementById('versandart');
         const pickupContainer = document.getElementById('pickup-container');
         const versandContainer = document.getElementById('versand-container');
         const btn = document.getElementById('submitBtn');
+        const msgDiv = document.getElementById('message');
 
         versandSelect.addEventListener('change', function() {
             if (this.value === 'pickup') {
-                // Abholung gewählt
-                pickupContainer.style.display = 'block';
+                pickupContainer.classList.remove('hidden-fields');
                 document.getElementById('fnf_code').required = true;
-                
-                versandContainer.style.display = 'none';
+                versandContainer.classList.add('hidden-fields');
                 document.getElementById('strasse').required = false;
                 document.getElementById('plz').required = false;
                 document.getElementById('ort').required = false;
-                
                 btn.textContent = 'Kostenpflichtig bestellen';
             } else if (this.value === 'versand') {
-                // Versand gewählt
-                versandContainer.style.display = 'block';
+                versandContainer.classList.remove('hidden-fields');
                 document.getElementById('strasse').required = true;
                 document.getElementById('plz').required = true;
                 document.getElementById('ort').required = true;
-                
-                pickupContainer.style.display = 'none';
+                pickupContainer.classList.add('hidden-fields');
                 document.getElementById('fnf_code').required = false;
-
                 btn.textContent = 'Bestellen (+ 5,00 € Versand)';
             } else {
-                // Nichts gewählt
-                pickupContainer.style.display = 'none';
-                versandContainer.style.display = 'none';
+                pickupContainer.classList.add('hidden-fields');
+                versandContainer.classList.add('hidden-fields');
                 document.getElementById('fnf_code').required = false;
                 document.getElementById('strasse').required = false;
                 document.getElementById('plz').required = false;
@@ -119,7 +261,8 @@
         form.addEventListener('submit', e => {
             e.preventDefault();
             btn.disabled = true;
-            document.getElementById('message').innerHTML = "Bestellung wird gesendet...";
+            msgDiv.textContent = "Bestellung wird gesendet...";
+            msgDiv.className = ''; // Reset classes
 
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
@@ -130,17 +273,19 @@
                 body: JSON.stringify(data)
             })
             .then(() => {
-                document.getElementById('message').innerHTML = "Danke! Deine Bestellung wurde aufgenommen.";
+                msgDiv.textContent = "Danke! Deine Bestellung wurde aufgenommen.";
+                msgDiv.className = 'success-msg';
                 form.reset();
-                // Nach dem Reset die Felder wieder verstecken
-                pickupContainer.style.display = 'none';
-                versandContainer.style.display = 'none';
+                pickupContainer.classList.add('hidden-fields');
+                versandContainer.classList.add('hidden-fields');
                 btn.textContent = 'Kostenpflichtig bestellen';
+                galleryContainer.style.display = 'none'; // Galerie nach Reset verstecken
                 btn.disabled = false;
             })
             .catch(error => {
                 console.error('Error!', error.message);
-                document.getElementById('message').innerHTML = "Fehler beim Senden. Bitte versuche es erneut.";
+                msgDiv.textContent = "Fehler beim Senden. Bitte versuche es erneut.";
+                msgDiv.className = 'error-msg';
                 btn.disabled = false;
             });
         });
