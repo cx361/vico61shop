@@ -12,10 +12,15 @@
             font-family: 'Inter', sans-serif; 
             background-color: #fff; 
             color: #000; 
-            height: 100vh; 
-            overflow: hidden; 
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Desktop: Kein Scrollen | Mobile: Scrollen erlaubt */
+        @media (min-width: 851px) {
+            body { height: 100vh; overflow: hidden; }
         }
 
         header {
@@ -23,15 +28,33 @@
             font-family: 'Syncopate', sans-serif;
             font-size: 28px;
             text-transform: uppercase;
+            text-align: center;
         }
 
         main {
             display: flex;
             flex: 1;
             padding: 0 60px 60px 60px;
-            gap: 60px;
+            gap: 40px;
             align-items: center;
             justify-content: center;
+            flex-direction: row; /* Desktop Standard */
+        }
+
+        /* Responsive Breakpoint für Handys */
+        @media (max-width: 850px) {
+            header { padding: 30px 20px; font-size: 22px; }
+            main { 
+                flex-direction: column; 
+                padding: 0 20px 40px 20px;
+                align-items: stretch;
+            }
+            .gallery-section { 
+                height: 40vh !important; 
+                max-width: 100% !important; 
+                margin-bottom: 20px;
+            }
+            .order-section { max-width: 100% !important; }
         }
 
         .gallery-section {
@@ -41,7 +64,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            background: #fff; /* Fix: war #fffff */
+            background: #fff;
             position: relative;
         }
 
@@ -55,8 +78,8 @@
         }
 
         #main-jersey-image {
-            max-width: 85%;
-            max-height: 85%;
+            max-width: 90%;
+            max-height: 90%;
             object-fit: contain;
             cursor: pointer;
         }
@@ -67,12 +90,14 @@
             transform: translateY(-50%);
             font-size: 30px;
             cursor: pointer;
-            padding: 20px;
+            padding: 15px;
             user-select: none;
             z-index: 10;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
         }
-        #nav-left { left: 5px; }
-        #nav-right { right: 5px; }
+        #nav-left { left: 0; }
+        #nav-right { right: 0; }
 
         #view-indicator {
             text-align: center;
@@ -80,7 +105,7 @@
             font-size: 10px;
             letter-spacing: 2px;
             text-transform: uppercase;
-            padding: 15px 0;
+            padding: 10px 0;
         }
 
         .order-section {
@@ -88,72 +113,56 @@
             max-width: 400px;
         }
 
-        .product-info {
-            margin-bottom: 30px;
-        }
-
-        .product-info h2 {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        .product-info p {
-            font-size: 13px; /* Etwas kleiner für den langen Text */
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
+        .product-info { margin-bottom: 25px; }
+        .product-info h2 { font-family: 'Syncopate', sans-serif; font-size: 18px; margin-bottom: 10px; }
+        .product-info p { font-size: 13px; color: #666; margin-bottom: 15px; line-height: 1.5; }
 
         .price-tag {
             font-family: 'Syncopate', sans-serif;
-            font-size: 22px;
+            font-size: 20px;
             border-top: 2px solid #000;
             padding-top: 10px;
         }
 
-        input, select, textarea {
+        input, select {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             margin-bottom: 10px;
             border: 1px solid #000;
             font-family: 'Inter', sans-serif;
-            font-size: 13px;
+            font-size: 14px;
+            border-radius: 0;
+            -webkit-appearance: none; /* Fixt Select-Styling auf iOS */
         }
 
         .flex-row { display: flex; gap: 8px; }
 
         button {
             width: 100%;
-            padding: 18px;
+            padding: 20px;
             background: #000;
             color: #fff;
             border: none;
             font-family: 'Syncopate', sans-serif;
             font-size: 13px;
             cursor: pointer;
+            border-radius: 0;
         }
 
-        button:disabled { background: #ccc; cursor: not-allowed; }
-
+        button:disabled { background: #ccc; }
         .hidden { display: none; }
 
-        /* Styles für den PayPal Screen */
-        #success-screen {
-            text-align: center;
-        }
+        #success-screen { text-align: center; padding: 20px 0; }
         #success-screen h2 { font-family: 'Syncopate', sans-serif; font-size: 16px; margin-bottom: 20px; }
-        #success-screen p { font-size: 14px; margin-bottom: 10px; line-height: 1.5; }
         .paypal-button {
-            display: inline-block;
+            display: block;
             margin-top: 20px;
-            padding: 18px 30px;
+            padding: 18px;
             background: #0070ba;
             color: #fff;
             text-decoration: none;
             font-family: 'Syncopate', sans-serif;
             font-size: 12px;
-            width: 100%;
         }
     </style>
 </head>
@@ -175,12 +184,9 @@
             <div id="form-container">
                 <div class="product-info">
                     <h2><361 Trikot</h2>
-                    <p>Performance Interlock Textil. <br>
-                    150GSM Atmungsaktives Polyester. Vinyldruck und High-Density Stick.<br><br>
-                    Der Erlös wird gleichmäßig an den Heyva Sor a Kurdistanê e.V. und den Palestine Childrens Relief Fund gespendet.<br><br>   
-                    Bestellungen bis 03.05.2026.<br>
-                    Produktion ca. 4-6 Wochen. <br>
-                    Infos zum Status folgen per Mail.
+                    <p>Performance Interlock Textil. 150GSM Atmungsaktives Polyester. Vinyldruck und High-Density Stick.<br><br>
+                    Der Erlös wird gespendet an Heyva Sor a Kurdistanê e.V. und PCRF.<br><br>   
+                    Order bis 03.05.2026. Produktion ca. 4-6 Wochen.
                     </p>
                     <div class="price-tag" id="displayPrice">30,00 €</div>
                 </div>
@@ -235,18 +241,18 @@
 
             <div id="success-screen" class="hidden">
                 <h2>DANKE FÜR DEN SUPPORT!</h2>
-                <p>DEINE BESTELLNUMMER:<br><strong id="orderIDDisplay" style="font-size: 20px;"></strong></p>
-                <p>Bitte begleiche den Betrag über PayPal, damit wir deine Bestellung produzieren können:</p>
-                <a id="paypalLink" href="#" target="_blank" class="paypal-button">JETZT PER PAYPAL ZAHLEN</a>
-                <p style="font-size: 10px; margin-top: 15px; color: #0000;">Bitte gib deine Bestellnummer im Verwendungszweck an.</p>
+                <p>ORDER ID:<br><strong id="orderIDDisplay" style="font-size: 20px;"></strong></p>
+                <p>Bitte begleiche den Betrag über PayPal:</p>
+                <a id="paypalLink" href="#" target="_blank" class="paypal-button">JETZT ZAHLEN</a>
+                <p style="font-size: 10px; margin-top: 15px; color: #999;">ID im Verwendungszweck angeben.</p>
             </div>
         </section>
     </main>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwrg36-1bzzSIzTnI-9UyA3E9nWFrL3cwDcT7zNUnDvmiH4LOPcfEKJBFTUW_JIAOeL/exec';
-        const PAYPAL_EMAIL = "carlojancke@gmail.com"; // <--- DEINE EMAIL HIER EINTRAGEN
-        const SECRET_CODE = "361";
+        const PAYPAL_EMAIL = "DEINEMAIL@GMAIL.COM"; // <--- ÄNDERN!
+        const SECRET_CODE = "VON36BIS61WESH";
         const BASE_PRICE = 30;
 
         const images = {
@@ -271,8 +277,8 @@
             checkValidation();
         }
 
-        document.getElementById('nav-left').onclick = () => { currentSide = currentSide === 'front' ? 'back' : 'front'; updateUI(); };
-        document.getElementById('nav-right').onclick = () => { currentSide = currentSide === 'front' ? 'back' : 'front'; updateUI(); };
+        document.getElementById('nav-left').onclick = (e) => { e.stopPropagation(); currentSide = currentSide === 'front' ? 'back' : 'front'; updateUI(); };
+        document.getElementById('nav-right').onclick = (e) => { e.stopPropagation(); currentSide = currentSide === 'front' ? 'back' : 'front'; updateUI(); };
         imgElement.onclick = () => { currentSide = currentSide === 'front' ? 'back' : 'front'; updateUI(); };
         document.getElementById('farbeSelect').onchange = (e) => { currentColor = e.target.value; updateUI(); };
 
@@ -281,7 +287,6 @@
             userDataSection.classList.toggle('hidden', val === "");
             document.getElementById('pickup-field').classList.toggle('hidden', val !== 'pickup');
             document.getElementById('address-fields').classList.toggle('hidden', val !== 'versand');
-            
             const total = val === 'versand' ? BASE_PRICE + 5 : BASE_PRICE;
             priceDisplay.textContent = total.toFixed(2).replace('.', ',') + " €";
             checkValidation();
@@ -292,19 +297,15 @@
             const name = document.getElementsByName('name')[0].value;
             const email = document.getElementsByName('email')[0].value;
             const fnfInput = document.getElementById('fnf_input');
-
             let isValid = name.length > 2 && email.includes('@');
 
             if (versand === 'versand') {
-                const strasse = document.getElementById('strasse').value;
-                if(strasse.length < 3) isValid = false;
+                if(document.getElementById('strasse').value.length < 3) isValid = false;
                 submitBtn.textContent = "BESTELLEN (" + (BASE_PRICE + 5) + "€)";
             } else if (versand === 'pickup') {
                 if (fnfInput.value !== SECRET_CODE) isValid = false;
                 submitBtn.textContent = (fnfInput.value === SECRET_CODE) ? "BESTELLEN (PICKUP)" : "CODE REQUIRED";
-            } else {
-                isValid = false;
-            }
+            } else { isValid = false; }
             submitBtn.disabled = !isValid;
         }
 
@@ -314,34 +315,20 @@
             e.preventDefault();
             submitBtn.disabled = true;
             submitBtn.textContent = "SENDING...";
-
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
-            
-            // Generate Order ID
-            const initials = data.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            const initials = data.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,3);
             const orderID = initials + "-" + Math.floor(1000 + Math.random() * 9000);
-            
-            // Build PayPal Link
             const amount = data.versandart === 'versand' ? BASE_PRICE + 5 : BASE_PRICE;
-            const ppLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(PAYPAL_EMAIL)}&amount=${amount}&currency_code=EUR&item_name=VICO61%20Jersey%20Order%20${orderID}&no_shipping=1`;
+            const ppLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(PAYPAL_EMAIL)}&amount=${amount}&currency_code=EUR&item_name=VICO61%20Order%20${orderID}&no_shipping=1`;
 
-            if(data.versandart === 'pickup') data.fnf_code = document.getElementById('fnf_input').value;
-
-            fetch(scriptURL, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                body: JSON.stringify({...data, orderID: orderID}) 
-            })
+            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({...data, orderID: orderID}) })
             .then(() => {
                 formContainer.classList.add('hidden');
                 successScreen.classList.remove('hidden');
                 document.getElementById('orderIDDisplay').textContent = orderID;
                 document.getElementById('paypalLink').href = ppLink;
-            })
-            .catch(err => {
-                alert("Fehler beim Senden. Bitte versuche es erneut.");
-                submitBtn.disabled = false;
+                window.scrollTo(0,0);
             });
         };
     </script>
