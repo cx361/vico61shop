@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>VICO Jersey Drop</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; line-height: 1.6; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #000; color: #fff; border: none; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
+        #message { margin-top: 20px; font-weight: bold; text-align: center; }
+        
+        /* Container für die dynamischen Felder verstecken wir anfangs */
+        .hidden-fields { display: none; }
+        
+        /* Layout für PLZ und Ort nebeneinander */
+        .flex-row { display: flex; gap: 10px; }
+        .flex-row > input:first-child { flex: 1; } /* PLZ schmaler */
+        .flex-row > input:last-child { flex: 2; }  /* Ort breiter */
+    </style>
+</head>
+<body>
+    <h1>VICO Jersey Pre-Order</h1>
+    <p>Wähle deine Details für das <361 Trikot.</p>
+
+    <form id="orderForm">
+        <input type="text" name="name" placeholder="Vollständiger Name" required>
+        <input type="email" name="email" placeholder="E-Mail Adresse" required>
+        
+        <select name="farbe" required>
+            <option value="">Farbe wählen</option>
+            <option value="hellblau">Hellblau</option>
+            <option value="dunkelblau">Dunkelblau</option>
+        </select>
+
+        <select name="groesse" required>
+            <option value="">Größe wählen</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+        </select>
+
+        <select name="nummer" required>
+            <option value="">Rückennummer wählen</option>
+            <option value="36">36</option>
+            <option value="61">61</option>
+            <option value="ohne">ohne</option>
+        </select>
+
+        <select name="versandart" id="versandart" required>
+            <option value="">Lieferart wählen</option>
+            <option value="pickup">Abholung (Friends & Family Code)</option>
+            <option value="versand">Versand (+ 5,00 €)</option>
+        </select>
+
+        <div id="pickup-container" class="hidden-fields">
+            <input type="text" name="fnf_code" id="fnf_code" placeholder="Friends & Family Code">
+        </div>
+
+        <div id="versand-container" class="hidden-fields">
+            <input type="text" name="strasse" id="strasse" placeholder="Straße & Hausnummer">
+            <div class="flex-row">
+                <input type="text" name="plz" id="plz" placeholder="PLZ">
+                <input type="text" name="ort" id="ort" placeholder="Ort">
+            </div>
+        </div>
+
+        <button type="submit" id="submitBtn">Kostenpflichtig bestellen</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwrg36-1bzzSIzTnI-9UyA3E9nWFrL3cwDcT7zNUnDvmiH4LOPcfEKJBFTUW_JIAOeL/exec';
+        const form = document.getElementById('orderForm');
+        
+        // Logik für das Ein-/Ausblenden der Versand/Pickup-Felder
+        const versandSelect = document.getElementById('versandart');
+        const pickupContainer = document.getElementById('pickup-container');
+        const versandContainer = document.getElementById('versand-container');
+        const btn = document.getElementById('submitBtn');
+
+        versandSelect.addEventListener('change', function() {
+            if (this.value === 'pickup') {
+                // Abholung gewählt
+                pickupContainer.style.display = 'block';
+                document.getElementById('fnf_code').required = true;
+                
+                versandContainer.style.display = 'none';
+                document.getElementById('strasse').required = false;
+                document.getElementById('plz').required = false;
+                document.getElementById('ort').required = false;
+                
+                btn.textContent = 'Kostenpflichtig bestellen';
+            } else if (this.value === 'versand') {
+                // Versand gewählt
+                versandContainer.style.display = 'block';
+                document.getElementById('strasse').required = true;
+                document.getElementById('plz').required = true;
+                document.getElementById('ort').required = true;
+                
+                pickupContainer.style.display = 'none';
+                document.getElementById('fnf_code').required = false;
+
+                btn.textContent = 'Bestellen (+ 5,00 € Versand)';
+            } else {
+                // Nichts gewählt
+                pickupContainer.style.display = 'none';
+                versandContainer.style.display = 'none';
+                document.getElementById('fnf_code').required = false;
+                document.getElementById('strasse').required = false;
+                document.getElementById('plz').required = false;
+                document.getElementById('ort').required = false;
+                btn.textContent = 'Kostenpflichtig bestellen';
+            }
+        });
+
+        // Formular absenden
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            btn.disabled = true;
+            document.getElementById('message').innerHTML = "Bestellung wird gesendet...";
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                document.getElementById('message').innerHTML = "Danke! Deine Bestellung wurde aufgenommen.";
+                form.reset();
+                // Nach dem Reset die Felder wieder verstecken
+                pickupContainer.style.display = 'none';
+                versandContainer.style.display = 'none';
+                btn.textContent = 'Kostenpflichtig bestellen';
+                btn.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                document.getElementById('message').innerHTML = "Fehler beim Senden. Bitte versuche es erneut.";
+                btn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
