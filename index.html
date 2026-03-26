@@ -30,19 +30,18 @@
             flex: 1;
             padding: 0 60px 60px 60px;
             gap: 60px;
-            align-items: center; /* Vertikale Zentrierung */
+            align-items: center;
             justify-content: center;
         }
 
-        /* Linke Seite: Galerie etwas kleiner */
         .gallery-section {
             flex: 1;
             max-width: 500px;
-            height: 60vh; /* Festgelegte Höhe für Kompaktheit */
+            height: 60vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            background: #fffff;
+            background: #fff; /* Fix: war #fffff */
             position: relative;
         }
 
@@ -84,7 +83,6 @@
             padding: 15px 0;
         }
 
-        /* Rechte Seite */
         .order-section {
             flex: 1;
             max-width: 400px;
@@ -101,9 +99,10 @@
         }
 
         .product-info p {
-            font-size: 14px;
+            font-size: 13px; /* Etwas kleiner für den langen Text */
             color: #666;
             margin-bottom: 15px;
+            line-height: 1.4;
         }
 
         .price-tag {
@@ -139,12 +138,22 @@
 
         .hidden { display: none; }
 
-        #message {
-            margin-top: 15px;
-            font-size: 11px;
+        /* Styles für den PayPal Screen */
+        #success-screen {
             text-align: center;
-            font-weight: bold;
-            text-transform: uppercase;
+        }
+        #success-screen h2 { font-family: 'Syncopate', sans-serif; font-size: 16px; margin-bottom: 20px; }
+        #success-screen p { font-size: 14px; margin-bottom: 10px; line-height: 1.5; }
+        .paypal-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 18px 30px;
+            background: #0070ba;
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 12px;
+            width: 100%;
         }
     </style>
 </head>
@@ -163,72 +172,79 @@
         </section>
 
         <section class="order-section">
-            <div class="product-info">
-                <h2><361 Trikot</h2>
-                <p>Performance Interlock Textil. <br>
-                150GSM Atmungsaktives Polyester. Vinyldruck und High-Density Stick.<br>
-                <br>
-                Der Erlös wird gleichmäßig an den Heyva Sor a Kurdistanê e.V. und den Palestine Childrens Relief Fund gespendet.<br>
-                <br>    
-                Bestellungen werden bis zum 03.05.2026 entgegengenommen.
-                Danach wird die Produktion wird ca 4-6 Wochen in Anspruch nehmen.
-                Du wirst per Email über den aktuellen Stand auf dem Laufenden gehalten.
-                </p>
-                <div class="price-tag" id="displayPrice">30,00 €</div>
-            </div>
-
-            <form id="orderForm">
-                <select name="farbe" id="farbeSelect" required>
-                    <option value="hellblau">HELLBLAU</option>
-                    <option value="dunkelblau">DUNKELBLAU</option>
-                </select>
-
-                <div class="flex-row">
-                    <select name="groesse" required>
-                        <option value="S">S</option>
-                        <option value="M" selected>M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                    </select>
-
-                    <select name="nummer" required>
-                        <option value="36">36</option>
-                        <option value="61">61</option>
-                        <option value="ohne">OHNE</option>
-                    </select>
+            <div id="form-container">
+                <div class="product-info">
+                    <h2><361 Trikot</h2>
+                    <p>Performance Interlock Textil. <br>
+                    150GSM Atmungsaktives Polyester. Vinyldruck und High-Density Stick.<br><br>
+                    Der Erlös wird gleichmäßig an den Heyva Sor a Kurdistanê e.V. und den Palestine Childrens Relief Fund gespendet.<br><br>   
+                    Bestellungen bis 03.05.2026. Produktion ca. 4-6 Wochen. 
+                    Infos zum Status folgen per Mail.
+                    </p>
+                    <div class="price-tag" id="displayPrice">30,00 €</div>
                 </div>
 
-                <select name="versandart" id="versandart" required>
-                    <option value="">LIEFERART WÄHLEN</option>
-                    <option value="pickup">PICKUP (F&F CODE)</option>
-                    <option value="versand">VERSAND (+5€)</option>
-                </select>
+                <form id="orderForm">
+                    <select name="farbe" id="farbeSelect" required>
+                        <option value="hellblau">HELLBLAU</option>
+                        <option value="dunkelblau">DUNKELBLAU</option>
+                    </select>
 
-                <div id="user-data-section" class="hidden">
-                    <input type="text" name="name" placeholder="VOLLSTÄNDIGER NAME" required>
-                    <input type="email" name="email" placeholder="EMAIL ADRESSE" required>
+                    <div class="flex-row">
+                        <select name="groesse" required>
+                            <option value="S">S</option>
+                            <option value="M" selected>M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                        </select>
 
-                    <div id="pickup-field" class="hidden">
-                        <input type="text" id="fnf_input" placeholder="ENTER F&F CODE">
+                        <select name="nummer" required>
+                            <option value="36">36</option>
+                            <option value="61">61</option>
+                            <option value="ohne">OHNE</option>
+                        </select>
                     </div>
 
-                    <div id="address-fields" class="hidden">
-                        <input type="text" name="strasse" id="strasse" placeholder="STRASSE / NR">
-                        <div class="flex-row">
-                            <input type="text" name="plz" id="plz" placeholder="PLZ">
-                            <input type="text" name="ort" id="ort" placeholder="STADT">
+                    <select name="versandart" id="versandart" required>
+                        <option value="">LIEFERART WÄHLEN</option>
+                        <option value="pickup">PICKUP (F&F CODE)</option>
+                        <option value="versand">VERSAND (+5€)</option>
+                    </select>
+
+                    <div id="user-data-section" class="hidden">
+                        <input type="text" name="name" placeholder="VOLLSTÄNDIGER NAME" required>
+                        <input type="email" name="email" placeholder="EMAIL ADRESSE" required>
+
+                        <div id="pickup-field" class="hidden">
+                            <input type="text" id="fnf_input" placeholder="ENTER F&F CODE">
+                        </div>
+
+                        <div id="address-fields" class="hidden">
+                            <input type="text" name="strasse" id="strasse" placeholder="STRASSE / NR">
+                            <div class="flex-row">
+                                <input type="text" name="plz" id="plz" placeholder="PLZ">
+                                <input type="text" name="ort" id="ort" placeholder="STADT">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <button type="submit" id="submitBtn" disabled>BESTELLEN</button>
-            </form>
-            <div id="message"></div>
+                    <button type="submit" id="submitBtn" disabled>BESTELLEN</button>
+                </form>
+            </div>
+
+            <div id="success-screen" class="hidden">
+                <h2>DANKE FÜR DEN SUPPORT!</h2>
+                <p>DEINE BESTELLNUMMER:<br><strong id="orderIDDisplay" style="font-size: 20px;"></strong></p>
+                <p>Bitte begleiche den Betrag über PayPal, damit wir deine Bestellung produzieren können:</p>
+                <a id="paypalLink" href="#" target="_blank" class="paypal-button">JETZT PER PAYPAL ZAHLEN</a>
+                <p style="font-size: 10px; margin-top: 15px; color: #999;">Bitte gib deine Bestellnummer im Verwendungszweck an.</p>
+            </div>
         </section>
     </main>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwrg36-1bzzSIzTnI-9UyA3E9nWFrL3cwDcT7zNUnDvmiH4LOPcfEKJBFTUW_JIAOeL/exec';
+        const PAYPAL_EMAIL = "DEINEMAIL@GMAIL.COM"; // <--- DEINE EMAIL HIER EINTRAGEN
         const SECRET_CODE = "VON36BIS61WESH";
         const BASE_PRICE = 30;
 
@@ -245,6 +261,8 @@
         const submitBtn = document.getElementById('submitBtn');
         const priceDisplay = document.getElementById('displayPrice');
         const userDataSection = document.getElementById('user-data-section');
+        const formContainer = document.getElementById('form-container');
+        const successScreen = document.getElementById('success-screen');
 
         function updateUI() {
             imgElement.src = images[currentColor][currentSide];
@@ -286,7 +304,6 @@
             } else {
                 isValid = false;
             }
-
             submitBtn.disabled = !isValid;
         }
 
@@ -299,15 +316,31 @@
 
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
+            
+            // Generate Order ID
+            const initials = data.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            const orderID = initials + "-" + Math.floor(1000 + Math.random() * 9000);
+            
+            // Build PayPal Link
+            const amount = data.versandart === 'versand' ? BASE_PRICE + 5 : BASE_PRICE;
+            const ppLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(PAYPAL_EMAIL)}&amount=${amount}&currency_code=EUR&item_name=VICO61%20Jersey%20Order%20${orderID}&no_shipping=1`;
+
             if(data.versandart === 'pickup') data.fnf_code = document.getElementById('fnf_input').value;
 
-            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
+            fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify({...data, orderID: orderID}) 
+            })
             .then(() => {
-                document.getElementById('message').innerHTML = "DANKE FÜR DEN SUPPORT ! ";
-                e.target.reset();
-                userDataSection.classList.add('hidden');
-                priceDisplay.textContent = total+" €";
-                checkValidation();
+                formContainer.classList.add('hidden');
+                successScreen.classList.remove('hidden');
+                document.getElementById('orderIDDisplay').textContent = orderID;
+                document.getElementById('paypalLink').href = ppLink;
+            })
+            .catch(err => {
+                alert("Fehler beim Senden. Bitte versuche es erneut.");
+                submitBtn.disabled = false;
             });
         };
     </script>
